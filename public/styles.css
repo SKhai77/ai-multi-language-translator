@@ -1,0 +1,281 @@
+/* ========== CSS Variables ========== */
+
+/* Color Palette */
+:root {
+    --primary-color: #007BFF;
+    --primary-color-hover: #0056b3;
+    --secondary-color: #6c757d;
+    --secondary-color-hover: #5a6268;
+    --success-color: #28a745;
+    --background-color: #f4f4f4;
+    --light-bg-color: #ffffff;
+    --border-color: #ccc;
+    --text-color: #333;
+    --placeholder-color: #888888;
+    --error-color: #dc3545;
+
+    /* Spacing and Sizing */
+    --padding-small: 8px;
+    --padding-medium: 12px;
+    --padding-large: 15px;
+    --border-radius: 8px;
+    --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --input-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    /* Font Sizes */
+    --font-size-small: 14px;
+    --font-size-medium: 16px;
+    --font-size-large: 24px;
+}
+
+/* ========== Global Reset and Box-Sizing ========== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+h1,
+p,
+textarea,
+select,
+button,
+label {
+    margin: 0;
+    padding: 0;
+}
+
+/* ========== Base Styles ========== */
+
+/* Set a modern, clean font and apply background */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: var(--padding-medium);
+    /* Add padding for better mobile layout */
+}
+
+/* ========== Translator Container ========== */
+
+#translator {
+    background-color: var(--light-bg-color);
+    padding: var(--padding-large);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-large);
+    /* Space between elements */
+    margin: 0 auto;
+    /* Center the container */
+}
+
+/* ========== Headings ========== */
+
+h1 {
+    font-size: var(--font-size-large);
+    margin-bottom: var(--padding-large);
+    color: var(--text-color);
+}
+
+/* ========== Form Elements ========== */
+
+/* Style for the textarea input and output */
+textarea {
+    width: 100%;
+    padding: var(--padding-large);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-medium);
+    font-family: inherit;
+    box-shadow: var(--input-shadow);
+    transition: border-color 0.3s ease;
+    resize: none;
+    min-height: 100px;
+    /* Ensure textarea remains usable */
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+textarea[readonly] {
+    background-color: var(--background-color);
+}
+
+/* Style for the select dropdown */
+select {
+    width: 100%;
+    padding: var(--padding-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-medium);
+    background-color: var(--light-bg-color);
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Labels */
+label {
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: left;
+    width: 100%;
+    margin-bottom: var(--padding-small);
+}
+
+/* ========== Buttons ========== */
+
+/* Base button styles */
+button {
+    background-color: var(--primary-color);
+    color: var(--light-bg-color);
+    padding: var(--padding-medium) var(--padding-large);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-medium);
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: var(--input-shadow);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:focus {
+    outline: 2px solid var(--primary-color-hover);
+    outline-offset: 2px;
+}
+
+/* Toggle button for reverse translation */
+.toggle-button {
+    background-color: var(--secondary-color);
+    color: var(--light-bg-color);
+    padding: var(--padding-small);
+    font-size: var(--font-size-medium);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: var(--input-shadow);
+}
+
+.toggle-button.active {
+    background-color: var(--success-color);
+    /* Green when active */
+}
+
+.toggle-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== Translation Result ========== */
+
+#result {
+    margin-top: var(--padding-large);
+    padding: var(--padding-large);
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-medium);
+    text-align: left;
+    line-height: 1.5;
+    box-shadow: var(--input-shadow);
+    word-wrap: break-word;
+    width: 100%;
+    max-height: 300px;
+    /* Limit the height to prevent overflowing */
+    overflow-y: auto;
+    /* Add a scrollbar if the content exceeds the max height */
+}
+
+/* Error message styling */
+.error {
+    color: var(--error-color);
+    font-weight: bold;
+    margin-top: var(--padding-small);
+    text-align: left;
+}
+
+/* Placeholder styling */
+textarea::placeholder {
+    color: var(--placeholder-color);
+    opacity: 1;
+}
+
+/* ========== Responsive Design ========== */
+
+@media (max-width: 600px) {
+    body {
+        padding: var(--padding-small);
+        /* Remove padding on very small screens */
+    }
+
+    #translator {
+        padding: var(--padding-medium);
+        max-width: 100%;
+        /* Full width on smaller screens */
+        box-shadow: none;
+        /* Simplify shadow on small screens */
+    }
+
+    h1 {
+        font-size: var(--font-size-medium);
+        /* Slightly smaller font size for header */
+    }
+
+    button,
+    select,
+    textarea {
+        font-size: var(--font-size-small);
+        /* Slightly smaller text size for controls */
+        padding: var(--padding-small);
+        /* Reduce padding for controls */
+    }
+
+    textarea {
+        min-height: 80px;
+    }
+
+    #result {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 375px) {
+    #translator {
+        padding: var(--padding-small);
+    }
+
+    button,
+    select,
+    textarea {
+        font-size: var(--font-size-small);
+        padding: var(--padding-small);
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    #result {
+        max-height: 150px;
+    }
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Language Translator</title>
+
+    <!-- Link to the stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Theme color for the address bar on mobile browsers (optional) -->
+    <meta name="theme-color" content="#007BFF" />
+  </head>
+  <body>
+    <div id="translator">
+      <h1>Multi-Language Translator</h1>
+
+      <!-- Textarea for user input -->
+      <textarea
+        id="inputText"
+        rows="4"
+        placeholder="Enter text to translate..."
+      ></textarea>
+
+      <!-- Label and select dropdown for target language -->
+      <label for="targetLanguage">Select Target Language:</label>
+      <select id="targetLanguage">
+        <option value="Chinese">Chinese</option>
+        <option value="Spanish">Spanish</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Myanmar">Myanmar</option>
+      </select>
+
+      <!-- Checkbox for reverse translation -->
+      <div class="checkbox-container">
+        <input type="checkbox" id="reverseTranslation" />
+        <label for="reverseTranslation"
+          >Reverse translation (Back to English)</label
+        >
+      </div>
+
+      <!-- Translate button -->
+      <button id="translateButton">Translate</button>
+
+      <!-- Area to display the translation result -->
+      <div id="result"></div>
+    </div>
+
+    <!-- Script to handle the translation logic -->
+    <script src="script.js"></script>
+    <!-- Load your script directly -->
+  </body>
+</html>
