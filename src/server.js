@@ -1,6 +1,7 @@
 const express = require("express");
 const helmet = require("helmet");
-const morgan = require("morgan"); // Added Morgan for logging
+const morgan = require("morgan"); // Morgan for logging HTTP requests
+const logger = require("../logger.js"); // Winston logger
 const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
 const path = require("path");
@@ -16,8 +17,14 @@ app.use(
   })
 );
 
-// Use Morgan to log requests to the console
-app.use(morgan("dev"));
+// Configure Morgan to log HTTP requests and pipe logs to Winston
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()), // Pipe Morgan logs into Winston
+    },
+  })
+);
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "../public")));
@@ -62,9 +69,10 @@ const translate = async (input, targetLanguage, reverse) => {
 
     const parsedResult = res.content.trim();
     cache.set(cacheKey, parsedResult); // Cache the result
+    logger.info(`Translation successful: ${parsedResult}`); // Log successful translations
     return parsedResult;
   } catch (err) {
-    console.error("Model invocation failed:", err);
+    logger.error("Model invocation failed:", err);
 
     // Handle specific error if OpenAI API Key is invalid
     if (err.message.includes("Invalid API Key")) {
@@ -91,20 +99,21 @@ app.post("/translate", async (req, res) => {
 
   try {
     const result = await translate(question, targetLanguage, reverse);
+    logger.info(`Translation request processed for: ${question}`);
     res.json({ result });
   } catch (error) {
-    console.error("Error during translation:", error.message);
+    logger.error("Error during translation:", error.message);
     res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error(err.stack); // Log the error using Winston
   res.status(500).send("Something went wrong!");
 });
 
 // Start the server on the specified port in config.js
 app.listen(config.app.port, () => {
-  console.log(`Server is running on http://localhost:${config.app.port}`);
+  logger.info(`Server is running on http://localhost:${config.app.port}`);
 });
