@@ -1,5 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
+const morgan = require("morgan"); // Added Morgan for logging
 const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
 const path = require("path");
@@ -9,7 +10,14 @@ const app = express();
 
 // Middleware to parse JSON and apply security headers
 app.use(express.json());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Disable CSP if needed for external API calls
+  })
+);
+
+// Use Morgan to log requests to the console
+app.use(morgan("dev"));
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "../public")));
@@ -57,6 +65,14 @@ const translate = async (input, targetLanguage, reverse) => {
     return parsedResult;
   } catch (err) {
     console.error("Model invocation failed:", err);
+
+    // Handle specific error if OpenAI API Key is invalid
+    if (err.message.includes("Invalid API Key")) {
+      throw new Error(
+        "Translation failed due to invalid API key. Please check your OpenAI API configuration."
+      );
+    }
+
     throw new Error("Translation failed. Please try again later.");
   }
 };
@@ -78,7 +94,7 @@ app.post("/translate", async (req, res) => {
     res.json({ result });
   } catch (error) {
     console.error("Error during translation:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 });
 
