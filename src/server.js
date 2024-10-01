@@ -1,11 +1,12 @@
+// Imports the required modules
 const express = require("express");
 const helmet = require("helmet");
-const morgan = require("morgan"); // Morgan for logging HTTP requests
-const logger = require("../logger.js"); // Winston logger
+const morgan = require("morgan");
+const logger = require("../config/logger.js");
 const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
 const path = require("path");
-const config = require("./config.js");
+const config = require("../config/config.js");
 
 const app = express();
 
