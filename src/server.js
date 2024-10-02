@@ -2,7 +2,7 @@
 const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const rateLimit = require("express-rate-limit"); // Import rate limiting middleware
+const rateLimit = require("express-rate-limit");
 const logger = require("../config/logger.js");
 const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
@@ -23,7 +23,7 @@ app.use(
 app.use(
   morgan("combined", {
     stream: {
-      write: (message) => logger.info(message.trim()), // Pipe Morgan logs into Winston
+      write: (message) => logger.info(message.trim()),
     },
   })
 );
@@ -47,7 +47,7 @@ app.use("/translate", limiter);
 const model = new ChatOpenAI({
   openAIApiKey: config.openai.apiKey,
   temperature: config.openai.temperature,
-  modelName: config.openai.model, // Corrected property name
+  modelName: config.openai.model, 
 });
 
 // Define prompt templates for translation and reverse translation
