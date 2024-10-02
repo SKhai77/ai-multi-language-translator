@@ -90,7 +90,7 @@ h1 {
 
 /* ========== Form Elements ========== */
 
-/* Style for the textarea input and output */
+/* Style for the textarea input */
 textarea {
     width: 100%;
     padding: var(--padding-large);
@@ -168,23 +168,19 @@ button:focus {
 }
 
 /* Toggle button for reverse translation */
-.toggle-button {
-    background-color: var(--secondary-color);
-    color: var(--light-bg-color);
-    padding: var(--padding-small);
-    font-size: var(--font-size-medium);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: var(--input-shadow);
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
-.toggle-button.active {
-    background-color: var(--success-color);
-    /* Green when active */
+.checkbox-container input[type="checkbox"] {
+    margin-right: var(--padding-small);
 }
 
-.toggle-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+.checkbox-container label {
+    font-weight: normal;
+    /* Adjust font weight if needed */
 }
 
 /* ========== Translation Result ========== */
@@ -204,6 +200,23 @@ button:focus {
     /* Limit the height to prevent overflowing */
     overflow-y: auto;
     /* Add a scrollbar if the content exceeds the max height */
+}
+
+/* Styling for Rate Limit Information */
+#rateLimitInfo {
+    margin-top: var(--padding-small);
+    font-size: var(--font-size-small);
+    color: var(--text-color);
+    text-align: left;
+    width: 100%;
+}
+
+/* Loader styling */
+.loader {
+    font-size: var(--font-size-medium);
+    color: var(--primary-color);
+    text-align: center;
+    padding: var(--padding-small);
 }
 
 /* Error message styling */
@@ -237,7 +250,7 @@ textarea::placeholder {
     }
 
     h1 {
-        font-size: var(--font-size-medium);
+        font-size: calc(var(--font-size-large) - 4px);
         /* Slightly smaller font size for header */
     }
 
