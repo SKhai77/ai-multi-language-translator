@@ -2,6 +2,7 @@
 const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit"); // Import rate limiting middleware
 const logger = require("../config/logger.js");
 const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
@@ -30,11 +31,23 @@ app.use(
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "../public")));
 
+// Rate limiting middleware configuration
+const limiter = rateLimit({
+  windowMs: config.rateLimit.windowMs, // 15 minutes
+  max: config.rateLimit.max, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after some time.",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply rate limiting middleware to the /translate route
+app.use("/translate", limiter);
+
 // Initialize OpenAI model using settings from config.js
 const model = new ChatOpenAI({
   openAIApiKey: config.openai.apiKey,
   temperature: config.openai.temperature,
-  model: config.openai.model,
+  modelName: config.openai.model, // Corrected property name
 });
 
 // Define prompt templates for translation and reverse translation
