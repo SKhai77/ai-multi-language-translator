@@ -1,4 +1,5 @@
-// Initialize the loader element
+// script.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const inputTextArea = document.getElementById("inputText");
   const translateButton = document.getElementById("translateButton");
@@ -6,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const reverseTranslationCheckbox =
     document.getElementById("reverseTranslation");
   const resultDiv = document.getElementById("result");
+  const rateLimitInfo = document.getElementById("rateLimitInfo"); // Element to display remaining requests
   const loader = document.createElement("div");
   loader.className = "loader";
 
@@ -38,18 +40,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("Response received:", response.status);
 
+      // Get the RateLimit-Remaining header
+      const remainingRequests = response.headers.get("RateLimit-Remaining");
+
+      if (remainingRequests !== null) {
+        displayRemainingRequests(remainingRequests);
+      }
+
+      if (response.status === 429) {
+        // Handle rate limit exceeded
+        const data = await response.json();
+        const retryAfter = response.headers.get("Retry-After");
+        const minutes = Math.ceil(retryAfter / 60);
+
+        showError(`${data.error} Please try again after ${minutes} minute(s).`);
+        rateLimitInfo.textContent += ` | Try again after ${minutes} minute(s).`;
+        return;
+      }
+
+      if (!response.ok) {
+        // Handle other HTTP errors
+        const data = await response.json();
+        showError(data.error || "An error occurred. Please try again.");
+        return;
+      }
+
       const data = await response.json();
 
-      if (response.ok && data.result) {
+      if (data.result) {
         showResult(data.result);
-      } else if (data.error) {
-        showError(data.error);
       } else {
         showError("Translation failed. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
-      showError("An error occurred. Please try again.");
+      showError("A network error occurred. Please try again later.");
     } finally {
       hideLoader();
     }
@@ -73,5 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showError(message) {
     resultDiv.innerHTML = `<p class="error">${message}</p>`;
+  }
+
+  function displayRemainingRequests(remaining) {
+    rateLimitInfo.textContent = `Remaining Requests: ${remaining}`;
   }
 });
