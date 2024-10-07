@@ -135,8 +135,8 @@ In `config/config.js`, you can adjust the rate limiting settings:
 
 ```javascript
 rateLimit: {
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
 }
 ```
 
