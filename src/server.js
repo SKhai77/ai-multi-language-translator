@@ -33,8 +33,8 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // Rate limiting middleware configuration
 const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs, // 15 minutes
-  max: config.rateLimit.max, // limit each IP to 100 requests per windowMs
+  windowMs: config.rateLimit.windowMs, // 5 minutes
+  max: config.rateLimit.max, // limit each IP to 5 requests per windowMs
   message: "Too many requests from this IP, please try again after some time.",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
