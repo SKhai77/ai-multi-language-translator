@@ -1,5 +1,6 @@
-// Wait until the DOM is fully loaded, then get references to key DOM elements for handling user input, triggering translations, showing results, and displaying rate limit info.
+// Wait until the DOM is fully loaded before accessing elements
 document.addEventListener("DOMContentLoaded", () => {
+  // Get references to key DOM elements for user interaction
   const inputTextArea = document.getElementById("inputText");
   const translateButton = document.getElementById("translateButton");
   const targetLanguageSelect = document.getElementById("targetLanguage");
@@ -7,29 +8,31 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("reverseTranslation");
   const resultDiv = document.getElementById("result");
   const rateLimitInfo = document.getElementById("rateLimitInfo");
+
+  // Loader element for indicating ongoing processing
   const loader = document.createElement("div");
   loader.className = "loader";
 
   // Event listener for the translate button click event
   translateButton.addEventListener("click", async () => {
-    // Get the input text, selected target language, and whether reverse translation is enabled
+    // Extract input values from the text area and other elements
     const inputText = inputTextArea.value.trim();
     const targetLanguage = targetLanguageSelect.value;
     const reverseTranslation = reverseTranslationCheckbox.checked;
 
-    // If the input text is empty, show an error message and stop further execution
+    // Check if input text is provided, show error if missing
     if (!inputText) {
       showError("Please enter some text to translate.");
       return;
     }
 
-    // Show the loader to indicate that translation is in progress
+    // Display loader to indicate the translation process is in progress
     showLoader();
 
     try {
       console.log("Sending translation request...");
 
-      // Send the translation request to the server using the fetch API
+      // Make POST request to the server with translation parameters
       const response = await fetch("/translate", {
         method: "POST",
         headers: {
@@ -44,31 +47,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("Response received:", response.status);
 
-      // Get the remaining number of requests from the response headers
+      // Display remaining requests from rate limit headers if available
       const remainingRequests = response.headers.get("RateLimit-Remaining");
       if (remainingRequests !== null) {
         displayRemainingRequests(remainingRequests);
       }
 
-      // If the rate limit has been exceeded (HTTP 429), show an error message and how long to wait
+      // Check for 429 Too Many Requests response to handle rate limiting
       if (response.status === 429) {
-        const data = await response.json();
-        const retryAfter = response.headers.get("Retry-After");
-        const minutes = Math.ceil(retryAfter / 60);
-
-        showError(`${data.error} Please try again after ${minutes} minute(s).`);
-        rateLimitInfo.textContent += ` | Try again after ${minutes} minute(s).`;
+        try {
+          const data = await response.json();
+          showError(
+            data.error ||
+              "Too many requests from this IP, please try again after some time."
+          );
+        } catch (parseError) {
+          console.error("JSON parsing error:", parseError);
+          showError(
+            "Too many requests from this IP, please try again after some time."
+          );
+        }
         return;
       }
 
-      // If the response status is not OK, handle the error (e.g., network or server issue)
+      // Handle general errors for responses that are not OK (non-2xx)
       if (!response.ok) {
         const data = await response.json();
         showError(data.error || "An error occurred. Please try again.");
         return;
       }
 
-      // Process the successful response and display the translation result
+      // Process successful response and display the translation result
       const data = await response.json();
       if (data.result) {
         showResult(data.result);
@@ -76,16 +85,16 @@ document.addEventListener("DOMContentLoaded", () => {
         showError("Translation failed. Please try again.");
       }
     } catch (error) {
-      // Handle network errors or other issues during the fetch call
+      // Log and handle network or unexpected errors during the fetch call
       console.error("Error:", error);
       showError("A network error occurred. Please try again later.");
     } finally {
-      // Hide the loader once the translation is complete (either success or error)
+      // Remove the loader once translation is complete or an error occurs
       hideLoader();
     }
   });
 
-  // Function to show the loader while the translation is in progress
+  // Function to show loader animation during translation
   function showLoader() {
     loader.innerHTML = "Translating...";
     resultDiv.innerHTML = "";
@@ -99,17 +108,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to display the translation result
+  // Function to display the translation result in the result div
   function showResult(result) {
     resultDiv.innerHTML = `<p><strong>Translation:</strong></p><p>${result}</p>`;
   }
 
-  // Function to display error messages
+  // Function to display error messages in the result div
   function showError(message) {
     resultDiv.innerHTML = `<p class="error">${message}</p>`;
   }
 
-  // Function to display the remaining number of requests (rate limiting information)
+  // Function to update remaining requests info based on rate limiting headers
   function displayRemainingRequests(remaining) {
     rateLimitInfo.textContent = `Remaining Requests: ${remaining}`;
   }
