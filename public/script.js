@@ -55,18 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Check for 429 Too Many Requests response to handle rate limiting
       if (response.status === 429) {
-        try {
-          const data = await response.json();
-          showError(
-            data.error ||
-              "Too many requests from this IP, please try again after some time."
-          );
-        } catch (parseError) {
-          console.error("JSON parsing error:", parseError);
-          showError(
-            "Too many requests from this IP, please try again after some time."
-          );
-        }
+        const retryAfter = response.headers.get("Retry-After");
+        const resetEpoch = response.headers.get("RateLimit-Reset");
+        const resetTime = new Date(resetEpoch * 1000); // Convert to milliseconds
+        const retryTime = new Date(Date.now() + retryAfter * 1000); // Calculate retry time based on 'Retry-After'
+
+        showError(
+          `Too many requests. Try again after ${retryTime.toLocaleTimeString()} (server time).`
+        );
         return;
       }
 

@@ -13,7 +13,7 @@ A web-based application that translates text between multiple languages (English
   - **Myanmar**
 - **Reverse translation** option (translate back to English)
 - **Rate Limiting**:
-  - Limits each IP to 100 requests per 15 minutes
+  - Limits each IP to 5 requests per 5 minutes
   - Displays remaining requests to the user
   - Informs users when the limit is exceeded and how long to wait
 - Clean, responsive user interface with loading indicators
@@ -93,7 +93,7 @@ To set up the AI Multi-Language Translator locally, follow these steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/multi-language-translator.git
+   git clone https://github.com/SKhai77/ai-multi-language-translator.git
    ```
 
 2. **Navigate to the Project Directory:**
@@ -135,8 +135,8 @@ In `config/config.js`, you can adjust the rate limiting settings:
 
 ```javascript
 rateLimit: {
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
+  windowMs: 5 * 60 * 1000,
+  max: 5,
 }
 ```
 
@@ -256,14 +256,18 @@ Handles translation requests.
 
 ## Rate Limiting
 
-- Each IP address is limited to **100 requests per 15 minutes**.
-- The application displays the **remaining number of requests** after each translation.
+- Each IP address is limited to 5 requests per 5 minutes.
+- The application displays the remaining number of requests after each translation.
 - If the rate limit is exceeded, users receive a message indicating how long they need to wait before making a new request.
+
 - **Headers related to rate limiting:**
+
   - `RateLimit-Limit`: Maximum number of requests allowed.
   - `RateLimit-Remaining`: Number of requests left in the current window.
   - `RateLimit-Reset`: Time when the current window resets in UTC epoch seconds.
   - `Retry-After`: Number of seconds to wait before making a new request.
+
+  The frontend will display the remaining requests and, when the limit is exceeded, the time when users can retry.
 
 ---
 
